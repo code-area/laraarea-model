@@ -5,6 +5,7 @@ namespace LaraAreaModel\Traits;
 use Illuminate\Support\Facades\App;
 use LaraAreaModel\Exceptions\CastException;
 use LaraAreaModel\Interfaces\CastInterface;
+use Illuminate\Support\Str;
 
 trait CastsTrait
 {
@@ -187,11 +188,11 @@ trait CastsTrait
     protected function includeClassCasts($casts)
     {
         $castClassAttributes = array_diff_key($this->attributes, $casts);
-        $namespace = replace_after(get_class($this), '\\', 'Casts') . '\\';
+        $namespace = Str::after(get_class($this), '\\', 'Casts') . '\\'; // TODO check
         $namespace = str_replace('Models' . '\\', '', $namespace);
 
         foreach (array_keys($castClassAttributes) as $attribute) {
-            $className = $namespace . ucfirst(camel_case($attribute)) . 'Cast';
+            $className = $namespace . ucfirst(Str::camel($attribute)) . 'Cast';
             if (class_exists($className)) {
                 $casts[$attribute] = $className;
             }
