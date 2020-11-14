@@ -53,11 +53,42 @@ trait ModelTrait
      */
     public function getActions($group = self::PAGINATE_GROUP)
     {
-        return [
-            'list' => ['edit', 'show', 'destroy'],
-            'is_separate' => true,
+        return $this->actions ?  [
+            'list' => $this->processActions(),
+            'is_separate' => false,
             'label' => 'Actions'
-        ];
+        ]
+            : [];
+    }
+
+    /**
+     * @return array
+     */
+    protected function processActions()
+    {
+        $data = [];
+        $config = config('codearea-view.actions');
+        foreach ($this->actions as $action => $actionData) {
+            if (is_string($actionData)) {
+                $action = $actionData;
+                $actionData = [];
+            }
+            $actionData['action'] = $action;
+
+            $actionConfig = $config[$actionData['action']] ?? [];
+            if(empty($actionConfig['icon'])) {
+                $actionData['label'] = $actionData['label'] ?? ucfirst($actionData['action']);
+            } else {
+                $actionData['icon'] = $actionConfig['icon'];
+            }
+
+            if(! empty($actionConfig['method'])) {
+                $actionData['method'] = $actionConfig['method'];
+            }
+
+            $data[] = $actionData;
+        }
+        return $data;
     }
 
     /**
