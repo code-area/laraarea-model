@@ -346,16 +346,33 @@ trait ArrayToQueryTrait
      * @param $data
      * @return mixed
      */
-    public function queryWithCount($query, $data)
+	public function queryWithCount($query, $data)
     {
-        // @TODO improve
         $withCount = $this->getDataBy($data, 'with_count');
-        if ($withCount ) {
-            $query->withCount($withCount);
+        if ($withCount) {
+            $criterias = [];
+
+            if (is_array($withCount)) {
+                foreach ($withCount as $relation => $options) {
+                    if (is_int($relation)) {
+                        $criterias[] = $withCount;
+                        $query->withCount($withCount);
+                    } elseif (is_array($options)) {
+                        $criterias[$relation] = function ($q) use ($options) {
+                            $this->getQueryByArray($options, $q);
+                        };
+                    } else {
+                        $criterias[$relation] = $options;
+                    }
+                }
+            } else {
+                $criterias = [$withCount];
+            }
+            $query->withCount($criterias);
         }
         return $query;
     }
-
+	
     /**
      * Set eloquent query with criteria by array
      *
