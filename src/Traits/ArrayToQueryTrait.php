@@ -356,8 +356,7 @@ trait ArrayToQueryTrait
             if (is_array($withCount)) {
                 foreach ($withCount as $relation => $options) {
                     if (is_int($relation)) {
-                        $criterias[] = $withCount;
-                        $query->withCount($withCount);
+                        $criterias[] = $options;
                     } elseif (is_array($options)) {
                         $criterias[$relation] = function ($q) use ($options) {
                             $this->getQueryByArray($options, $q);
