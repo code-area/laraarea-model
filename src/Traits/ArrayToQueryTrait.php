@@ -250,6 +250,15 @@ trait ArrayToQueryTrait
             }
         }
 
+        $whereNotIn = $this->getDataBy($data, 'where_not_in');
+
+        if ($whereNotIn) {
+            foreach ($whereNotIn as $key => $values) {
+                $values = is_string($values) ? [$values] : $values;
+                $query->whereNotIn($key, $values);
+            }
+        }
+
         return $query;
     }
 
@@ -311,13 +320,13 @@ trait ArrayToQueryTrait
     {
         $latest = $this->getDataBy($data, 'latest');
         if ($latest) {
-            if (true != $latest) {
+            if (true === $latest) {
+                $query->latest();
+            } else {
                 $latestList = Arr::wrap($latest);
                 foreach ($latestList as $latest) {
                     $query->latest($latest);
                 }
-            } else {
-                $query->latest();
             }
         }
 
