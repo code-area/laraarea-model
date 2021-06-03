@@ -309,10 +309,16 @@ trait ArrayToQueryTrait
      */
     public function queryLatest($query, $data)
     {
-        // @TODO improve
         $latest = $this->getDataBy($data, 'latest');
         if ($latest) {
-            $query->latest();
+            if (true != $latest) {
+                $latestList = Arr::wrap($latest);
+                foreach ($latestList as $latest) {
+                    $query->latest($latest);
+                }
+            } else {
+                $query->latest();
+            }
         }
 
         return $query;
