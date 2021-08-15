@@ -42,7 +42,7 @@ trait ModelTrait
      */
     public function getMainDescriptiveAttribute()
     {
-        return $this->attributes[$this->descriptiveAttribute];
+        return $this->attributes[$this->getDescriptiveAttributeName()];
     }
 
     /**
